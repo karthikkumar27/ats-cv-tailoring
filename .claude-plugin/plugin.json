@@ -1,0 +1,14 @@
+{
+  "name": "ats-cv-tailoring",
+  "description": "Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx, with a fit verdict, a change log and an honest list of gaps.",
+  "version": "1.0.0",
+  "author": {
+    "name": "karthikkumar27",
+    "url": "https://github.com/karthikkumar27"
+  },
+  "homepage": "https://github.com/karthikkumar27/ats-cv-tailoring",
+  "repository": "https://github.com/karthikkumar27/ats-cv-tailoring",
+  "license": "MIT",
+  "keywords": ["resume", "cv", "ats", "job-search", "career"],
+  "skills": ["./"]
+}
