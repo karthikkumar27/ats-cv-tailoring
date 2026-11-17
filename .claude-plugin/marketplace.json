@@ -10,9 +10,16 @@
     {
       "name": "ats-cv-tailoring",
       "source": "./",
-      "description": "Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx, with a fit verdict, a change log and an honest list of gaps.",
+      "description": "Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx plus a matching 1-page cover letter, with a fit verdict, a change log and an honest list of gaps.",
       "license": "MIT",
-      "keywords": ["resume", "cv", "ats", "job-search", "career"]
+      "keywords": [
+        "resume",
+        "cv",
+        "ats",
+        "job-search",
+        "career",
+        "cover-letter"
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 # ATS CV Tailoring
 
-An agent skill that rewrites your resume for one job description. Paste a JD and you get back an ATS-friendly 2-page `.docx`, a fit verdict, a short list of what changed, and an honest list of the requirements you don't meet.
+An agent skill that rewrites your resume for one job description. Paste a JD and you get back an ATS-friendly 2-page `.docx`, a matching 1-page cover letter, a fit verdict, a short list of what changed, and an honest list of the requirements you don't meet.
 
 It works with Claude Code, Claude.ai, Codex, Cursor and any agent that reads `SKILL.md` or `AGENTS.md`.
 
@@ -11,6 +11,7 @@ Most AI resume tools do two things wrong. They stuff every skill you've ever tou
 - **JD-only skills.** The Skills section lists only what this JD asks for and you actually have, in the JD's own wording. Everything else stays out, even when it's true.
 - **No invented claims.** The agent can only use what's on your master resume or in your confirmed facts log. Anything the JD wants that you don't have is reported as a gap, never added.
 - **Fit check before work.** Location limits, visa requirements, languages, seniority mismatches and duplicate applications get flagged before anything is built.
+- **A cover letter with every JD, under the same rules.** Same facts, same JD focus, same layout every time, and one plain paragraph about the real gap instead of pretending it isn't there.
 
 ## Install
 
@@ -45,8 +46,9 @@ Clone the repo and open your agent in it. `AGENTS.md` points the agent at `SKILL
 
    It asks a few questions (team sizes, which numbers are estimates, tools you've only used lightly). Answer them once and every later resume follows them.
 4. You get:
-   - `applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>.docx`
-   - `applications/<Company>_<Role>/notes.md` with the fit verdict, the choices made, the gaps and the JD text
+   - `applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>.docx`, the resume
+   - `applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>_Cover_Letter.pdf`, a 1-page cover letter in the same layout as your previous ones
+   - `applications/<Company>_<Role>/notes.md` with the fit verdict, the choices made, the gaps, the JD text and a cover letter summary
    - a short reply: fit rating, what changed, numbered gaps, and one question
 
 When you confirm something new ("yes, I've used Terraform in production"), the agent adds it to your facts log so later resumes can use it, but only when a JD asks for it.
@@ -99,6 +101,8 @@ What changed
    PostgreSQL query tuning.
 4. "Mentored 4 junior engineers" kept as written, not upgraded to "led".
 
+Cover letter attached (1 page).
+
 Gaps (not on the resume)
 1. Payment systems or PCI DSS
 2. Kafka or another event streaming platform
@@ -113,7 +117,16 @@ Files saved:
 ```text
 applications/Acme_Senior-Backend-Engineer/
   Maya_Tan_Senior-Backend-Engineer_Acme.docx
+  Maya_Tan_Senior-Backend-Engineer_Acme_Cover_Letter.pdf
   notes.md
+```
+
+The gap paragraph from her cover letter:
+
+```text
+I haven't worked on payment systems or under PCI DSS yet. The closest
+work I've done is the billing migration at my current company, where I
+moved 2 million invoices to PostgreSQL with no reconciliation errors.
 ```
 
 ## Your data stays local
@@ -123,7 +136,8 @@ applications/Acme_Senior-Backend-Engineer/
 ## What the agent needs
 
 - Something that can write `.docx`: a docx skill, `python-docx`, the `docx` npm package or `pandoc`.
-- **Optional:** LibreOffice (`soffice`), so the agent can convert to PDF and confirm the page count. Without it the agent says the page count is unverified.
+- Something that can write a PDF for the cover letter: LibreOffice (`soffice --headless --convert-to pdf`), a PDF skill, or a library such as `reportlab`.
+- **Recommended:** LibreOffice, so the agent can also convert the resume to PDF and confirm both page counts. Without it the agent says the page count is unverified.
 
 ## Format rules
 
@@ -133,7 +147,7 @@ One column, no tables or text boxes, contact details in the body (not the header
 
 | File | What it is |
 |---|---|
-| [SKILL.md](SKILL.md) | The skill: workflow, honesty rules, format rules |
+| [SKILL.md](SKILL.md) | The skill: workflow, honesty rules, cover letter, format rules |
 | [templates/facts.md](templates/facts.md) | Starting point for your facts log |
 | [AGENTS.md](AGENTS.md) | Instructions for any agent working in this repo |
 | [CLAUDE.md](CLAUDE.md) | Claude Code entry point, imports AGENTS.md |

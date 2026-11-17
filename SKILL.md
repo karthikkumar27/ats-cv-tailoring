@@ -1,8 +1,8 @@
 ---
 name: ats-cv-tailoring
-description: Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx, with a fit verdict, a change log and an honest list of gaps. Use when someone pastes a job description (JD) and wants their resume or CV adapted to it, asks for an ATS check, or asks how well they fit a role.
+description: Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx plus a matching 1-page cover letter, with a fit verdict, a change log and an honest list of gaps. Use when someone pastes a job description (JD) and wants their resume or CV adapted to it, asks for an ATS check, or asks how well they fit a role.
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # ATS CV Tailoring
@@ -60,10 +60,17 @@ The resume must read as if it was written for this one job, not as a list of eve
    - Page count is 2 (or the count set in `profile/facts.md`). Convert to PDF with LibreOffice (`soffice --headless --convert-to pdf`) when it's available. If no converter exists, say the count is unverified.
    - Plain-text check: extract the text (`pandoc -t plain`, `python-docx`, or unzip `word/document.xml`) and confirm the JD's key terms appear, the reading order is right, and nothing is lost in headers, footers or text boxes.
 5. **Self-review** the summary, skills and bullets against the honesty rules. Remove any claim that isn't confirmed and any skill the JD doesn't name.
-6. **Save** to `applications/<Company>_<Role>/`: the `.docx`, any build script, and `notes.md` holding the fit verdict, the choices made, the gaps and the full JD text.
-7. **Reply briefly:**
+6. **Cover letter (every JD, always):** write a 1-page PDF cover letter alongside the resume, in the same layout every time. Start from the most recent cover letter in `applications/` so the format stays identical across applications. First time, use this layout:
+   - Arial (or Arimo) 11 to 12pt, contact block at the top right, then the date and the company line.
+   - Bold heading: `Application for <exact JD title>`.
+   - 3 to 5 short paragraphs: why this role, the 2 or 3 strongest matches to the JD backed by confirmed facts, one honest gap paragraph when there's a real gap (what's missing and what's closest), and a closing with the availability line from `profile/facts.md`.
+   - The same honesty rules and JD-only focus as the resume. Lead with what matches the JD. Never claim a skill the person lacks.
+   - Render it and confirm it's 1 page.
+7. **Save** to `applications/<Company>_<Role>/`: the resume `.docx`, the cover letter PDF, any build scripts, and `notes.md` holding the fit verdict, the choices made, the gaps, the full JD text, and a short "Cover letter" section (date, file name, paragraph flow, the gap line, and anything deliberately not claimed).
+8. **Reply briefly:**
    - fit verdict and blockers
    - what changed, in 3 to 5 points
+   - one line saying the cover letter is attached
    - a numbered list of **gaps only** (JD requirements the person doesn't have, or hasn't confirmed)
    - one focused question, usually whether they have experience with the biggest gap
 
@@ -81,5 +88,5 @@ Defaults. `profile/facts.md` can override any of them.
 - Calibri, Arial or another system font, 10 to 11pt. A4 or US Letter to match the job's country.
 - Dates as `Mon YYYY – Mon YYYY`, the same way everywhere.
 - Plain bullets (• or -), no custom symbols.
-- File name: `<First>_<Last>_<Role>_<Company>.docx`, no spaces.
-- Submit `.docx` unless the posting asks for PDF.
+- File names, no spaces: `<First>_<Last>_<Role>_<Company>.docx` for the resume, `<First>_<Last>_<Role>_<Company>_Cover_Letter.pdf` for the cover letter.
+- Submit the resume as `.docx` unless the posting asks for PDF.
