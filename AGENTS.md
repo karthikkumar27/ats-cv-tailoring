@@ -29,6 +29,7 @@ Read `SKILL.md` and follow it step by step. It's the source of truth for the wor
 ```
 SKILL.md                    the skill (workflow, honesty rules, format rules)
 templates/facts.md          starting point for a user's facts log
+templates/cover-letter.md   layout for a user's first cover letter
 .claude-plugin/             Claude Code plugin and marketplace manifests
 AGENTS.md                   this file
 CLAUDE.md                   Claude Code entry point, imports this file

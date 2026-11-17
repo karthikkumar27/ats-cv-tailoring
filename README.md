@@ -149,6 +149,7 @@ One column, no tables or text boxes, contact details in the body (not the header
 |---|---|
 | [SKILL.md](SKILL.md) | The skill: workflow, honesty rules, cover letter, format rules |
 | [templates/facts.md](templates/facts.md) | Starting point for your facts log |
+| [templates/cover-letter.md](templates/cover-letter.md) | Layout for your first cover letter |
 | [AGENTS.md](AGENTS.md) | Instructions for any agent working in this repo |
 | [CLAUDE.md](CLAUDE.md) | Claude Code entry point, imports AGENTS.md |
 | `.claude-plugin/` | Claude Code plugin and marketplace manifests |
