@@ -51,6 +51,71 @@ Clone the repo and open your agent in it. `AGENTS.md` points the agent at `SKILL
 
 When you confirm something new ("yes, I've used Terraform in production"), the agent adds it to your facts log so later resumes can use it, but only when a JD asks for it.
 
+## Example
+
+Maya Tan is an invented backend engineer with 6 years of experience. Her master resume lists Python, Go, Node.js, Docker, Kubernetes, PostgreSQL, Redis, AWS, React and Terraform.
+
+Two lines from her `profile/facts.md`:
+
+```markdown
+- "Mentored 4 junior engineers". Never "managed", she didn't hire or run reviews.
+- Kubernetes is familiarity only (one internal tool, never production).
+```
+
+She pastes this JD:
+
+```text
+Senior Backend Engineer, Payments (Singapore, hybrid)
+- 5+ years building backend services in Python or Go
+- Strong PostgreSQL, including query tuning
+- AWS (Lambda, SQS, RDS)
+- Experience with payment systems or PCI DSS
+- Kafka or another event streaming platform
+- Mentoring other engineers
+```
+
+**Skills section, before and after.** The master lists everything. The new version keeps only what the JD asks for and Maya has, in the JD's order and wording:
+
+```text
+Before: Python, Go, Node.js, Docker, Kubernetes, PostgreSQL, Redis, AWS, React, Terraform
+
+After:  Languages: Python, Go
+        Databases: PostgreSQL (query tuning, indexing)
+        Cloud: AWS (Lambda, SQS, RDS)
+```
+
+Node.js, Docker, Redis, React and Terraform are all true, and all left out, because this JD never mentions them. Kubernetes stays out for the same reason, and it would only ever appear as familiarity.
+
+**The agent's reply:**
+
+```text
+Fit: good. Hybrid in Singapore, and your facts log says you can work there.
+No language or seniority blockers.
+
+What changed
+1. Headline is now "Senior Backend Engineer, Payments".
+2. Skills cut from 10 tools to the 4 this JD names.
+3. The billing migration bullet moved to the top and now leads with the
+   PostgreSQL query tuning.
+4. "Mentored 4 junior engineers" kept as written, not upgraded to "led".
+
+Gaps (not on the resume)
+1. Payment systems or PCI DSS
+2. Kafka or another event streaming platform
+
+Have you worked with any event streaming, even SQS fan-out or Redis
+Streams? If so, I'll add it to your facts log and cover the Kafka gap
+honestly.
+```
+
+Files saved:
+
+```text
+applications/Acme_Senior-Backend-Engineer/
+  Maya_Tan_Senior-Backend-Engineer_Acme.docx
+  notes.md
+```
+
 ## Your data stays local
 
 `profile/` and `applications/` are git-ignored. If you fork this repo to use as your workspace, your resume and applications never get committed. Keep it that way: a public fork with a real resume in it is a gift to recruiters' scrapers and identity thieves.
