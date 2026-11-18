@@ -1,6 +1,6 @@
 # Your resume, facts and applications. Personal data, never committed.
-profile/
-applications/
+/profile/
+/applications/
 
 .DS_Store
 ~$*.docx

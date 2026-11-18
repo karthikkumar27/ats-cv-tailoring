@@ -10,6 +10,8 @@ Most AI resume tools do two things wrong. They stuff every skill you've ever tou
 
 - **JD-only skills.** The Skills section lists only what this JD asks for and you actually have, in the JD's own wording. Everything else stays out, even when it's true.
 - **No invented claims.** The agent can only use what's on your master resume or in your confirmed facts log. Anything the JD wants that you don't have is reported as a gap, never added.
+- **Keywords the way ATS search works.** It pulls the exact title, tools, certifications and repeated phrases from the JD, maps each one to something you've really done, and aims for 25 to 35 matches without stuffing.
+- **A facts log that remembers.** Every fact you confirm is dated, with what's OK to write and what isn't. The newest entry wins, so the agent never reuses wording you've since corrected.
 - **Fit check before work.** Location limits, visa requirements, languages, seniority mismatches and duplicate applications get flagged before anything is built.
 - **A cover letter with every JD, under the same rules.** Same facts, same JD focus, same layout every time, and one plain paragraph about the real gap instead of pretending it isn't there.
 
@@ -30,7 +32,7 @@ git clone https://github.com/karthikkumar27/ats-cv-tailoring ~/.claude/skills/at
 
 ### Claude.ai
 
-Zip `SKILL.md` and the `templates/` folder, then upload the zip under Settings, Capabilities, Skills.
+Zip `SKILL.md` with the `reference/`, `templates/` and `scripts/` folders, then upload the zip under Settings, Capabilities, Skills.
 
 ### Codex, Cursor and other agents
 
@@ -48,86 +50,96 @@ Clone the repo and open your agent in it. `AGENTS.md` points the agent at `SKILL
 4. You get:
    - `applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>.docx`, the resume
    - `applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>_Cover_Letter.pdf`, a 1-page cover letter in the same layout as your previous ones
-   - `applications/<Company>_<Role>/notes.md` with the fit verdict, the choices made, the gaps, the JD text and a cover letter summary
+   - `applications/<Company>_<Role>/keywords.txt`, the JD keywords the resume matches
+   - `applications/<Company>_<Role>/notes.md` with the fit verdict, the exact title used, the keyword count, the choices made, the gaps, the JD text and a cover letter summary
    - a short reply: fit rating, what changed, numbered gaps, and one question
 
 When you confirm something new ("yes, I've used Terraform in production"), the agent adds it to your facts log so later resumes can use it, but only when a JD asks for it.
 
 ## Example
 
-Maya Tan is an invented backend engineer with 6 years of experience. Her master resume lists Python, Go, Node.js, Docker, Kubernetes, PostgreSQL, Redis, AWS, React and Terraform.
+This is real output from the skill's test run on [examples/maya/](examples/maya). Maya Tan is invented: a backend engineer with 6 years of experience whose master resume lists 14 tools.
 
-Two lines from her `profile/facts.md`:
+Three lines from her `profile/facts.md`:
 
 ```markdown
-- "Mentored 4 junior engineers". Never "managed", she didn't hire or run reviews.
-- Kubernetes is familiarity only (one internal tool, never production).
+- **Mentoring (2026-10-02):** mentored 4 junior engineers. Never "managed" or "led a team".
+- **Kubernetes (2026-10-08):** familiarity only, never production. Replaces the 2026-10-02 note.
+- Don't claim: payment systems, PCI DSS, Kafka.
 ```
 
-She pastes this JD:
+The JD is a Senior Backend Engineer, Payments role at a payments company: Python or Go, PostgreSQL query tuning, AWS Lambda/SQS/RDS, event-driven architecture (Kafka a plus), payment systems or PCI DSS, TDD, GitHub Actions, and "must be able to work in Singapore without sponsorship".
+
+**Skills, before and after:**
 
 ```text
-Senior Backend Engineer, Payments (Singapore, hybrid)
-- 5+ years building backend services in Python or Go
-- Strong PostgreSQL, including query tuning
-- AWS (Lambda, SQS, RDS)
-- Experience with payment systems or PCI DSS
-- Kafka or another event streaming platform
-- Mentoring other engineers
-```
-
-**Skills section, before and after.** The master lists everything. The new version keeps only what the JD asks for and Maya has, in the JD's order and wording:
-
-```text
-Before: Python, Go, Node.js, Docker, Kubernetes, PostgreSQL, Redis, AWS, React, Terraform
+Before: Python, Go, TypeScript, Node.js, PostgreSQL, MySQL, Redis, AWS (Lambda,
+        SQS, RDS, S3), Docker, Kubernetes, Terraform, GitHub Actions, React,
+        TDD, code review, Agile
 
 After:  Languages: Python, Go
-        Databases: PostgreSQL (query tuning, indexing)
+        Databases: PostgreSQL (query tuning, indexing, query performance)
         Cloud: AWS (Lambda, SQS, RDS)
+        Architecture: Event-driven architecture, backend services
+        Engineering practices: Test-driven development (TDD), CI/CD with GitHub
+        Actions, code review, mentoring
 ```
 
-Node.js, Docker, Redis, React and Terraform are all true, and all left out, because this JD never mentions them. Kubernetes stays out for the same reason, and it would only ever appear as familiarity.
+TypeScript, Node.js, MySQL, Redis, Docker, Kubernetes, Terraform, React and Agile are all true, and all left out, because this JD doesn't ask for them.
 
-**The agent's reply:**
+**The agent's reply (shortened):**
 
 ```text
-Fit: good. Hybrid in Singapore, and your facts log says you can work there.
-No language or seniority blockers.
+Fit: good. No hard blockers. The JD needs work in Singapore without
+sponsorship and you're logged as "Singapore Permanent Resident, no
+sponsorship needed". 6 years against 5+. The big gap is payments.
 
 What changed
-1. Headline is now "Senior Backend Engineer, Payments".
-2. Skills cut from 10 tools to the 4 this JD names.
-3. The billing migration bullet moved to the top and now leads with the
-   PostgreSQL query tuning.
-4. "Mentored 4 junior engineers" kept as written, not upgraded to "led".
+- Headline and summary lead with "Senior Backend Engineer". "Payments" is
+  left out of the headline because you can't claim payments work; the cover
+  letter uses the full title.
+- Skills cut to what the JD names.
+- Northwind: 6 bullets aimed at the JD, "Tech stack" line dropped.
+- Kept invoice-diff (closest thing to reconciliation work), dropped shelf-scan.
+- 23 keywords matched, below the 25 to 35 target on purpose: the rest are gaps.
 
-Cover letter attached (1 page).
+The 1-page cover letter PDF is next to the resume.
 
-Gaps (not on the resume)
-1. Payment systems or PCI DSS
-2. Kafka or another event streaming platform
+Gaps
+1. Payment systems (authorisation, settlement). On your don't-claim list.
+2. PCI DSS. On your don't-claim list.
+3. Kafka (a plus). On your don't-claim list.
+4. Owning PostgreSQL schemas. Not confirmed: migration and tuning are
+   logged, schema design isn't.
+5. Reliability work on settlement or reconciliation jobs.
 
-Have you worked with any event streaming, even SQS fan-out or Redis
-Streams? If so, I'll add it to your facts log and cover the Kafka gap
-honestly.
+On the billing migration, did you design or own the PostgreSQL schemas, or
+only move and tune the data?
 ```
 
-Files saved:
+**The gap paragraph from the cover letter:**
 
 ```text
-applications/Acme_Senior-Backend-Engineer/
-  Maya_Tan_Senior-Backend-Engineer_Acme.docx
-  Maya_Tan_Senior-Backend-Engineer_Acme_Cover_Letter.pdf
+I haven't worked on payment systems or with PCI DSS, and I haven't used
+Kafka. The closest I have is billing work: the invoice migration above, and
+invoice-diff, an open-source Python CLI I wrote that compares invoice exports
+between two databases and reports mismatches.
+```
+
+**Files saved:**
+
+```text
+applications/AcmePay_Senior_Backend_Engineer/
+  Maya_Tan_Senior_Backend_Engineer_AcmePay.docx
+  Maya_Tan_Senior_Backend_Engineer_AcmePay_Cover_Letter.pdf
+  keywords.txt
   notes.md
+  resume_build.js
 ```
 
-The gap paragraph from her cover letter:
+## Try it on the example
 
-```text
-I haven't worked on payment systems or under PCI DSS yet. The closest
-work I've done is the billing migration at my current company, where I
-moved 2 million invoices to PostgreSQL with no reconciliation errors.
-```
+[examples/maya/](examples/maya) has an invented candidate (`profile/resume.md`, `profile/facts.md`) and a sample JD (`jd.txt`). Copy the folder somewhere, open your agent in it, and paste the JD. It's also what the skill is tested against.
 
 ## Your data stays local
 
@@ -135,6 +147,7 @@ moved 2 million invoices to PostgreSQL with no reconciliation errors.
 
 ## What the agent needs
 
+- Python 3 for the check script (standard library only; `pypdf` makes PDF page counts exact).
 - Something that can write `.docx`: a docx skill, `python-docx`, the `docx` npm package or `pandoc`.
 - **Optional, for an identical layout every time:** copy [templates/resume_build.js](templates/resume_build.js) to `profile/resume_build.js`, replace the example data with yours, and run `npm install docx@9`. The agent then edits only the content and runs it with `node`.
 - Something that can write a PDF for the cover letter: LibreOffice (`soffice --headless --convert-to pdf`), a PDF skill, or a library such as `reportlab`.
@@ -142,16 +155,19 @@ moved 2 million invoices to PostgreSQL with no reconciliation errors.
 
 ## Format rules
 
-One column, no tables or text boxes, contact details in the body (not the header), standard headings, a system font at 10 to 11pt, consistent `Mon YYYY – Mon YYYY` dates, `.docx` unless the posting asks for PDF. Override any of these in the Preferences section of `profile/facts.md`. Full list in [SKILL.md](SKILL.md#format-rules-ats-safe).
+One column, no tables or text boxes, contact details in the body (not the header), standard headings, a standard font at 10 to 12pt, consistent `Mon YYYY – Mon YYYY` dates, `.docx` unless the posting asks for PDF. Override any of these in the Standing rules section of `profile/facts.md`. The reasons behind each rule are in [reference/ats-guide.md](reference/ats-guide.md). Full list in [SKILL.md](SKILL.md#format-rules-ats-safe).
 
 ## Files
 
 | File | What it is |
 |---|---|
 | [SKILL.md](SKILL.md) | The skill: workflow, honesty rules, cover letter, format rules |
+| [reference/ats-guide.md](reference/ats-guide.md) | How ATS parsing works, do's and don'ts, keyword method, pre-submission checklist |
+| [scripts/ats_check.py](scripts/ats_check.py) | Checks layout, contact details, dates, keywords and page counts (`--self-test` to test it) |
 | [templates/facts.md](templates/facts.md) | Starting point for your facts log |
 | [templates/cover-letter.md](templates/cover-letter.md) | Layout for your first cover letter |
 | [templates/resume_build.js](templates/resume_build.js) | Optional resume builder with a fixed ATS-safe layout (invented example data) |
+| [examples/maya/](examples/maya) | Invented candidate and JD for trying and testing the skill |
 | [AGENTS.md](AGENTS.md) | Instructions for any agent working in this repo |
 | [CLAUDE.md](CLAUDE.md) | Claude Code entry point, imports AGENTS.md |
 | `.claude-plugin/` | Claude Code plugin and marketplace manifests |

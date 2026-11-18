@@ -1,7 +1,7 @@
 <!--
 Cover letter skeleton for the first application. After that, the agent copies
 the layout of your most recent cover letter in applications/ instead.
-Layout: 1 page, Arial (or Arimo) 11 to 12pt. Contact block right-aligned,
+Layout: 1 page, Arial, Arimo or Helvetica (the built-in PDF font) at 11 to 12pt. Contact block right-aligned,
 everything else left-aligned. Replace every <...>, then delete this comment.
 -->
 

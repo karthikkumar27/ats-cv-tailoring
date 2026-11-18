@@ -2,7 +2,7 @@
 name: ats-cv-tailoring
 description: Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx plus a matching 1-page cover letter, with a fit verdict, a change log and an honest list of gaps. Use when someone pastes a job description (JD) and wants their resume or CV adapted to it, asks for an ATS check, or asks how well they fit a role.
 metadata:
-  version: 1.2.0
+  version: 2.0.0
 ---
 
 # ATS CV Tailoring
@@ -13,58 +13,98 @@ The output has to pass two readers: an applicant tracking system (ATS) that pars
 
 ## Sources
 
-Look for a `profile/` folder in the current project:
+In the current project:
 
-- `profile/resume.md`: the master resume, the source of truth. Any format works (`.md`, `.docx`, `.pdf`), Markdown is easiest to keep current.
-- `profile/facts.md`: the **confirmed facts log**. True things that aren't on the master resume yet, plus limits on how facts may be worded ("led" vs "mentored", "estimated" numbers, tools that belong to no single job). It also holds format preferences.
-- `applications/`: earlier rewritten resumes, one folder per application. Start from the closest one.
+- `profile/resume_build.js` or `profile/resume.md`: the master resume, the source of truth. If the build script exists it wins, because it also fixes the layout. Otherwise any format works (`.md`, `.docx`, `.pdf`).
+- `profile/facts.md`: the **confirmed facts log** and the user's standing rules (see "Reading the facts log").
+- `applications/`: earlier applications, one folder per job. Start from the closest one.
 
-**First run (no `profile/`):** ask the user to paste or attach their current resume. Create `profile/resume.md` from it and `profile/facts.md` from this skill's `templates/facts.md`, then walk through the template's questions with them before building anything. Don't guess answers to those questions.
+In this skill's folder:
+
+- `reference/ats-guide.md`: ATS do's and don'ts, the keyword method and the pre-submission checklist. Follow it on every application.
+- `templates/`: `facts.md`, `cover-letter.md` and `resume_build.js` for first runs.
+- `scripts/ats_check.py`: the mechanical checks (layout, contact, dates, keywords, page counts).
+
+Per job, the user gives the JD (pasted text or a file) and any application notes, such as "PDF required" or "they asked for expected salary".
+
+**First run (no `profile/`):** ask the user to paste or attach their current resume. Create `profile/resume.md` from it and `profile/facts.md` from `templates/facts.md`, then go through the template's first-run questions with them before building anything. Don't guess answers.
+
+## Reading the facts log
+
+`profile/facts.md` is a dated log. It grows over many applications, so read it with these rules:
+
+- **The latest dated entry wins.** When two entries disagree, use the newer one, and treat older wording as replaced even if nobody deleted it.
+- **Each fact carries its limits.** An entry usually says what's OK to write ("OK: 'led an offshore vendor team'") and what isn't confirmed ("Not confirmed: vendor selection"). Use the OK wording; never write the unconfirmed part.
+- **Facts with no confirmed employer stay out of job bullets.** Put them in Skills or the Summary only. The same goes for facts marked "assumed" (an assumed employer isn't a confirmed one).
+- **"Don't claim" entries are hard stops**, even when the JD asks for exactly that.
+- **Situational facts appear only when the JD asks:** expected salary, travel, driving licence, notice period changes, and similar.
+- **Work authorisation:** use the exact phrase logged. If the JD restricts who can apply ("citizens only", "no sponsorship", "local work rights only") and the log doesn't clearly meet it, that's a blocker in the fit check.
+- **Standing rules in the log override this skill's defaults**: an "Always include" project list, job title variants by role type, page count, paper size, font, file names.
 
 ## Honesty rules (never break these)
 
-- Claim only what's in `profile/resume.md` or `profile/facts.md`. Never invent tools, metrics, titles, employers, dates, team sizes or certifications.
-- Don't move a tool or achievement under a specific job unless the facts log says it belongs there. Tools with no confirmed home stay in Skills or the summary.
+- Claim only what's in the master resume or the facts log. Never invent tools, metrics, titles, employers, dates, team sizes or certifications.
 - Keep hedged wording exactly as logged. An "estimated 3x" stays estimated. "Mentored" doesn't become "managed", and "familiarity" doesn't become "experience".
-- Follow every wording limit in the facts log, even when the JD would reward breaking it.
+- Labels stay on: "(personal projects)", "(self-learning)", "(currently learning)".
+- A credential that isn't earned yet is written as `[expected completion: Mon YYYY]`, or left out.
+- Never include date of birth, a photo, marital status or a reason for leaving.
+- Where the person has a close equivalent to a JD skill (Azure DevOps for "GitHub Actions", say), ask before using it. Don't substitute silently.
 - If the JD warns against overclaiming or asks for evidence, say so in the fit check.
 
-## JD-only skills rule (the most important one)
+## JD-only rules (the most important ones)
 
 The resume must read as if it was written for this one job, not as a list of everything the person has done.
 
-- **Skills section:** only skills the JD names (or clear synonyms) that the person actually has, in the JD's wording and roughly its order. Nothing else.
-- **Don't carry skills over** from the master resume, the facts log or earlier applications just because they're true. The facts log is a pool to draw from, not a list to include every time. A Python/AWS JD that never mentions Node.js or Docker gets neither in Skills.
-- **Bullets** still describe real work, but name only the tools that matter for this JD. Drop "Tech stack" lines unless they're mostly JD technologies.
-- **Projects:** keep the ones that support the JD and drop the rest.
-- **JD skills the person lacks never go on the resume.** They go in the reply as gaps.
+1. **Skills section:** only skills the JD names (or clear synonyms) that the person actually has, in the JD's exact wording. If the JD writes "Google Cloud Platform (GCP)", so does the resume.
+2. **Don't carry skills over** from the master resume, the facts log or earlier applications just because they're true. The facts log is a pool to draw from, not a list to include every time. A Python/AWS JD that never mentions Node.js or Docker gets neither in Skills.
+3. **Order:** the most JD-relevant category first, and JD-matching skills first within each category.
+4. **Back up the top JD skills** in the Summary or a bullet too, not only in the Skills list.
+5. **Bullets** describe real work, but name only the tools that matter for this JD. Drop "Tech stack" lines unless they're mostly JD technologies.
+6. **Projects:** keep the ones that support the JD and drop the rest, unless the facts log has an "Always include" list. Those stay on every resume; they can be shortened or merged into one bullet, never dropped.
+7. **JD skills the person lacks never go on the resume.** They go in the reply and `notes.md` as gaps.
+
+## Keywords
+
+Follow section 4 of `reference/ats-guide.md`:
+
+- Pull from the JD: the exact job title, hard skills and tools, certifications, domain terms, and any phrase repeated 2 or more times (those come first).
+- Map each keyword to a real place in the resume (Summary, Skills or a bullet) or mark it a gap. Never place a keyword the person can't back up.
+- Aim for 25 to 35 matched keywords, spread naturally. Fewer is fine when the person doesn't have more; never pad.
+- Use the JD's exact phrase and acronym style. Write both forms once where it helps: "Amazon Web Services (AWS)".
+- No keyword stuffing, no hidden or white text, no pasted JD.
 
 ## Steps
 
 1. **Fit check first.** Read the JD and flag blockers before building anything:
-   - location, relocation or work-authorisation limits (country-only roles, named on-site cities, visa sponsorship)
+   - location, relocation or work-authorisation limits, checked against the facts log
    - required spoken languages
    - seniority mismatch, in either direction
    - mandatory domain experience or certifications
    - a duplicate of a role already applied for (check `applications/`)
 
    Give a one-line rating: strong, good, moderate or long shot. If there's a hard blocker, say so and ask whether to continue before building.
-2. **Build** the new resume from the closest earlier application or the master:
-   - Headline: the exact JD job title plus a short focus line.
-   - Summary: 3 to 4 lines in the JD's language, using confirmed facts only.
-   - Skills: 5 to 7 lines of `Category: a, b, c`, following the JD-only rule.
-   - Most recent role: about 7 bullets, reordered and reworded for the JD, each starting with a verb and carrying a number where one is confirmed. Older roles get fewer bullets.
+2. **Keywords:** list them and map each one (see "Keywords"). Save the matched list as `applications/<Company>_<Role>/keywords.txt`, one per line.
+3. **Build** from the closest earlier application, or from the master:
+   - Headline: the exact JD job title plus a short focus line. Use the job title variant the facts log sets for this kind of role. If the JD title names a domain the person can't claim ("Senior Backend Engineer, Payments" with payments on the "Don't claim" list), drop that part on the resume. The cover letter heading still uses the full title, because there it names the role being applied for.
+   - Summary: 3 to 4 lines in the JD's language, using confirmed facts only. The exact JD title appears in the first line.
+   - Skills: 5 to 7 lines of `Category: a, b, c`, following the JD-only rules.
+   - Most recent role: up to about 7 bullets, only as many as confirmed facts support, reordered and reworded for the JD. Each one is action verb + task (with a JD keyword) + a measured result where one is confirmed. Older roles get fewer bullets.
    - Roles in reverse chronological order, by start date.
-3. **Render the .docx** with whatever the environment has: a docx skill, `python-docx`, the `docx` npm package, or `pandoc`. Follow the format rules below. If `profile/resume_build.js` exists, it's the user's fixed layout: copy it into the application folder, change only the content, and run it. To set one up, start from this skill's `templates/resume_build.js`.
-4. **Verify:**
-   - Page count is 2 (or the count set in `profile/facts.md`). Convert to PDF with LibreOffice (`soffice --headless --convert-to pdf`) when it's available. If no converter exists, say the count is unverified.
-   - Plain-text check: extract the text (`pandoc -t plain`, `python-docx`, or unzip `word/document.xml`) and confirm the JD's key terms appear, the reading order is right, and nothing is lost in headers, footers or text boxes.
-5. **Self-review** the summary, skills and bullets against the honesty rules. Remove any claim that isn't confirmed and any skill the JD doesn't name.
-6. **Cover letter (every JD, always):** write a 1-page PDF cover letter alongside the resume, in the same layout every time. Start from the most recent cover letter in `applications/` so the format stays identical across applications. First time, fill in this skill's `templates/cover-letter.md`, which sets the layout, the heading and the paragraph order.
-   - The same honesty rules and JD-only focus as the resume. Lead with what matches the JD. Never claim a skill the person lacks.
-   - Render it and confirm it's 1 page.
-7. **Save** to `applications/<Company>_<Role>/`: the resume `.docx`, the cover letter PDF, any build scripts, and `notes.md` holding the fit verdict, the choices made, the gaps, the full JD text, and a short "Cover letter" section (date, file name, paragraph flow, the gap line, and anything deliberately not claimed).
-8. **Reply briefly:**
+4. **Render the .docx.** If `profile/resume_build.js` exists, copy it into the application folder, change only the content, and run it with `node`. Otherwise copy `templates/resume_build.js` the same way, or use what the environment has: a docx skill, `python-docx` or `pandoc`. Follow the format rules below.
+5. **Check:** run `python scripts/ats_check.py <resume.docx> --keywords <keywords.txt> --pages 2` from this skill's folder. `--pages` is a maximum. It fails on tables, text boxes, images, text in headers or footers, missing contact details, mixed date formats, unmatched keywords and too many pages. Fix every failure and run it again. If it reports the page count as unverified (no PDF converter), say so in the reply.
+6. **Self-review** against the honesty rules and the pre-submission checklist in `reference/ats-guide.md`. Remove any claim that isn't confirmed and any skill the JD doesn't name.
+7. **Cover letter (every JD, always):** a 1-page PDF next to the resume, in the same layout every time. Start from the most recent cover letter in `applications/`. First time, fill in `templates/cover-letter.md`.
+   - Same honesty rules and JD-only focus as the resume. Lead with what matches the JD. Never claim a skill the person lacks.
+   - One plain gap paragraph when there's a real gap: what's missing, and the closest thing they have done.
+   - Check it with `python scripts/ats_check.py <cover-letter.pdf> --pages 1`.
+8. **Save** to `applications/<Company>_<Role>/`: the resume `.docx`, the cover letter PDF, any build scripts, `keywords.txt`, and `notes.md` with:
+   - the fit verdict and blockers
+   - the exact title used and the number of keywords matched
+   - the choices made (what was cut, reordered or reworded, and why)
+   - the gaps
+   - a "Cover letter" section: date, file name, paragraph flow, the gap line, and anything deliberately not claimed
+   - the full JD text
+9. **Reply briefly:**
    - fit verdict and blockers
    - what changed, in 3 to 5 points
    - one line saying the cover letter is attached
@@ -73,17 +113,25 @@ The resume must read as if it was written for this one job, not as a list of eve
 
 ## When the user confirms a new fact
 
-Add it to `profile/facts.md` with the exact wording they approved and any limits on it, update `profile/resume.md` if it belongs there, and rebuild the current resume. Offer to update other open applications it affects. A new fact goes into future resumes only when that JD asks for it.
+- Add a dated entry to `profile/facts.md` in their approved wording, with what's OK to write and what still isn't confirmed.
+- If it replaces an older entry, say so in the new entry ("replaces the 14 Oct note") and update or remove the old one.
+- If it answers an item under "Still open", remove it from there.
+- Update the master resume if it belongs there, and rebuild the current application.
+- Offer to update other open applications it affects.
+- A new fact goes into future resumes only when that JD asks for it.
 
 ## Format rules (ATS-safe)
 
-Defaults. `profile/facts.md` can override any of them.
+Defaults. `profile/facts.md` can override any of them. The reasons are in `reference/ats-guide.md`.
 
-- One column. No tables, text boxes, columns, images, icons, charts or skill bars.
-- Contact details in the body, not in the page header or footer.
-- Standard section headings: Summary, Skills, Experience, Projects, Education, Certifications.
-- Calibri, Arial or another system font, 10 to 11pt. A4 or US Letter to match the job's country.
-- Dates as `Mon YYYY – Mon YYYY`, the same way everywhere.
-- Plain bullets (• or -), no custom symbols.
+- Length: at most 2 pages for the resume (or the count in the facts log), exactly 1 for the cover letter. Never pad to reach a page count; a strong 1-page resume beats a padded 2-page one.
+
+- One column. No tables, text boxes, columns, images, icons, emoji, charts or skill bars.
+- Name, email, phone, LinkedIn and city in the body at the top, not in the page header or footer.
+- Standard section headings: Summary, Skills, Work Experience, Projects, Education, Certifications.
+- Calibri, Arial or another standard font, 10 to 12pt. A4 or US Letter to match the job's country.
+- Work dates as `Mon YYYY – Mon YYYY`, the same way everywhere. Education can be year-only when months aren't known.
+- Plain bullets (• or -). Separators `|` or `·`, never box-drawing characters like `│`.
+- Locations include the country ("Chennai, India").
 - File names, no spaces: `<First>_<Last>_<Role>_<Company>.docx` for the resume, `<First>_<Last>_<Role>_<Company>_Cover_Letter.pdf` for the cover letter.
-- Submit the resume as `.docx` unless the posting asks for PDF.
+- Submit the resume as `.docx` unless the posting asks for PDF. A PDF must be text-based (exported, not scanned).

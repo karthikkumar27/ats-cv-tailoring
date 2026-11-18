@@ -22,12 +22,16 @@ Read `SKILL.md` and follow it step by step. It's the source of truth for the wor
 - Keep `README.md` in sync with `SKILL.md` (steps, rules, file layout).
 - Keep one version number in three places: `metadata.version` in `SKILL.md`, `.claude-plugin/plugin.json`, and the newest heading in `CHANGELOG.md`.
 - The plugin manifests reuse the first sentence of the `SKILL.md` description. Change them together.
+- After changing `SKILL.md` or `scripts/ats_check.py`, run `python scripts/ats_check.py --self-test`, then run the skill on `examples/maya/` and check the output against the honesty and JD-only rules.
 - Never put a real person's resume, facts or job applications in the repo. Examples use invented people.
 
 ## Layout
 
 ```
 SKILL.md                    the skill (workflow, honesty rules, format rules)
+reference/ats-guide.md      ATS guide and pre-submission checklist the skill follows
+scripts/ats_check.py        mechanical checks; run --self-test after changing it
+examples/maya/              invented candidate and JD, used to test the skill
 templates/facts.md          starting point for a user's facts log
 templates/cover-letter.md   layout for a user's first cover letter
 templates/resume_build.js   optional docx-js resume builder, invented example data

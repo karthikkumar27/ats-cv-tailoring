@@ -81,7 +81,7 @@ const children = [
   heading("Skills"),
   ...cv.skills.map(([cat, items]) => para([run(`${cat}: `, { bold: true }), run(items)])),
 
-  heading("Experience"),
+  heading("Work Experience"),
   ...cv.experience.flatMap((job) => [
     para([run(`${job.title}, ${job.company}`, { bold: true }), run(` | ${job.location} | ${job.dates}`)], {
       spacing: { before: 120, after: 40 },

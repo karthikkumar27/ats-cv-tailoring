@@ -1,0 +1,21 @@
+Senior Backend Engineer, Payments
+Acme Pay | Singapore (hybrid, 3 days in office)
+
+About the role
+Acme Pay processes card and wallet payments for 4,000 merchants across Southeast Asia. You'll build and run the services that move money: payment authorisation, settlement and reconciliation.
+
+What you'll do
+- Design and build backend services in Python or Go
+- Own PostgreSQL schemas and query performance for high-volume payment data
+- Build event-driven services on AWS (Lambda, SQS, RDS)
+- Improve reliability of settlement and reconciliation jobs
+- Mentor other engineers through code review
+
+What we're looking for
+- 5+ years building backend services in Python or Go
+- Strong PostgreSQL, including query tuning and indexing
+- AWS (Lambda, SQS, RDS)
+- Event-driven architecture; Kafka experience is a plus
+- Experience with payment systems or PCI DSS
+- Test-driven development (TDD) and CI/CD with GitHub Actions
+- Must be able to work in Singapore without sponsorship
