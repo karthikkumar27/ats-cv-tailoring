@@ -2,7 +2,7 @@
 name: ats-cv-tailoring
 description: Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx plus a matching 1-page cover letter, with a fit verdict, a change log and an honest list of gaps. Use when someone pastes a job description (JD) and wants their resume or CV adapted to it, asks for an ATS check, or asks how well they fit a role.
 metadata:
-  version: 1.1.1
+  version: 1.2.0
 ---
 
 # ATS CV Tailoring
@@ -55,7 +55,7 @@ The resume must read as if it was written for this one job, not as a list of eve
    - Skills: 5 to 7 lines of `Category: a, b, c`, following the JD-only rule.
    - Most recent role: about 7 bullets, reordered and reworded for the JD, each starting with a verb and carrying a number where one is confirmed. Older roles get fewer bullets.
    - Roles in reverse chronological order, by start date.
-3. **Render the .docx** with whatever the environment has: a docx skill, `python-docx`, the `docx` npm package, or `pandoc`. Follow the format rules below.
+3. **Render the .docx** with whatever the environment has: a docx skill, `python-docx`, the `docx` npm package, or `pandoc`. Follow the format rules below. If `profile/resume_build.js` exists, it's the user's fixed layout: copy it into the application folder, change only the content, and run it. To set one up, start from this skill's `templates/resume_build.js`.
 4. **Verify:**
    - Page count is 2 (or the count set in `profile/facts.md`). Convert to PDF with LibreOffice (`soffice --headless --convert-to pdf`) when it's available. If no converter exists, say the count is unverified.
    - Plain-text check: extract the text (`pandoc -t plain`, `python-docx`, or unzip `word/document.xml`) and confirm the JD's key terms appear, the reading order is right, and nothing is lost in headers, footers or text boxes.

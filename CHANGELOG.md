@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 (2026-11-18)
+
+Added `templates/resume_build.js`, an optional docx-js resume builder with invented example data. Copy it to `profile/resume_build.js` to get the exact same ATS-safe layout on every application.
+
 ## 1.1.1 (2026-11-18)
 
 Added `templates/cover-letter.md`, a Markdown skeleton for the first cover letter, so every agent lays it out the same way.

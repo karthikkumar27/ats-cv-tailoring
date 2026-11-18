@@ -136,6 +136,7 @@ moved 2 million invoices to PostgreSQL with no reconciliation errors.
 ## What the agent needs
 
 - Something that can write `.docx`: a docx skill, `python-docx`, the `docx` npm package or `pandoc`.
+- **Optional, for an identical layout every time:** copy [templates/resume_build.js](templates/resume_build.js) to `profile/resume_build.js`, replace the example data with yours, and run `npm install docx@9`. The agent then edits only the content and runs it with `node`.
 - Something that can write a PDF for the cover letter: LibreOffice (`soffice --headless --convert-to pdf`), a PDF skill, or a library such as `reportlab`.
 - **Recommended:** LibreOffice, so the agent can also convert the resume to PDF and confirm both page counts. Without it the agent says the page count is unverified.
 
@@ -150,6 +151,7 @@ One column, no tables or text boxes, contact details in the body (not the header
 | [SKILL.md](SKILL.md) | The skill: workflow, honesty rules, cover letter, format rules |
 | [templates/facts.md](templates/facts.md) | Starting point for your facts log |
 | [templates/cover-letter.md](templates/cover-letter.md) | Layout for your first cover letter |
+| [templates/resume_build.js](templates/resume_build.js) | Optional resume builder with a fixed ATS-safe layout (invented example data) |
 | [AGENTS.md](AGENTS.md) | Instructions for any agent working in this repo |
 | [CLAUDE.md](CLAUDE.md) | Claude Code entry point, imports AGENTS.md |
 | `.claude-plugin/` | Claude Code plugin and marketplace manifests |
