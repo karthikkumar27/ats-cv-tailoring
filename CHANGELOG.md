@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0 (2026-11-18)
+
+`templates/resume_build.js` now matches a real working resume: blue headline, clickable blue email, LinkedIn and GitHub links, and a bold "Availability:" line under the contact details. The format rules allow colour as an accent on the headline and links only.
+
 ## 2.0.0 (2026-11-18)
 
 Rebuilt from the full working version of the workflow.

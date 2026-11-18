@@ -2,7 +2,7 @@
 name: ats-cv-tailoring
 description: Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx plus a matching 1-page cover letter, with a fit verdict, a change log and an honest list of gaps. Use when someone pastes a job description (JD) and wants their resume or CV adapted to it, asks for an ATS check, or asks how well they fit a role.
 metadata:
-  version: 2.0.0
+  version: 2.1.0
 ---
 
 # ATS CV Tailoring
@@ -129,6 +129,7 @@ Defaults. `profile/facts.md` can override any of them. The reasons are in `refer
 - One column. No tables, text boxes, columns, images, icons, emoji, charts or skill bars.
 - Name, email, phone, LinkedIn and city in the body at the top, not in the page header or footer.
 - Standard section headings: Summary, Skills, Work Experience, Projects, Education, Certifications.
+- Colour only as an accent: the headline and links in blue, everything else black. Never let colour carry meaning on its own.
 - Calibri, Arial or another standard font, 10 to 12pt. A4 or US Letter to match the job's country.
 - Work dates as `Mon YYYY – Mon YYYY`, the same way everywhere. Education can be year-only when months aren't known.
 - Plain bullets (• or -). Separators `|` or `·`, never box-drawing characters like `│`.

@@ -4,15 +4,24 @@
 //   node profile/resume_build.js applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>.docx
 // Layout follows the format rules in SKILL.md: one column, no tables or text boxes,
 // contact details in the body, Calibri 10pt, A4, standard headings, plain bullets.
+// Colour is only on the headline and links: ATS parsers ignore colour, recruiters see it.
 
 const fs = require("fs");
-const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle } = require("docx");
+const { Document, Packer, Paragraph, TextRun, ExternalHyperlink, BorderStyle } = require("docx");
 
 // Everything below is invented. Maya Tan is not a real person.
 const cv = {
   name: "Maya Tan",
   headline: "Senior Backend Engineer | Python, Go, PostgreSQL, AWS",
-  contact: "Singapore · +65 8000 0000 · maya.tan@example.com · linkedin.com/in/example",
+  // Each contact line is a list of parts; parts with a `link` become clickable.
+  contact: [
+    ["Singapore", "+65 8000 0000", { text: "maya.tan@example.com", link: "mailto:maya.tan@example.com" }],
+    [
+      { text: "linkedin.com/in/example", link: "https://linkedin.com/in/example" },
+      { text: "github.com/example", link: "https://github.com/example" },
+    ],
+  ],
+  availability: "1 month notice",
   summary:
     "Backend engineer with 6 years building Python and Go services for billing and logistics. " +
     "Moved 2 million invoices to PostgreSQL with no reconciliation errors, and cut p95 API latency by 40%. " +
@@ -53,11 +62,13 @@ const cv = {
     },
   ],
   education: [{ degree: "BSc Computer Science", school: "Example University", dates: "2016 – 2020" }],
-  extra: ["Availability: 1 month notice"],
+  extra: [],
 };
 
 const FONT = "Calibri";
 const SIZE = 20; // half-points, so 20 = 10pt
+const ACCENT = "2E74B5"; // headline colour
+const LINK = "0563C1"; // Word's standard hyperlink blue
 
 const run = (text, opts = {}) => new TextRun({ text, font: FONT, size: SIZE, ...opts });
 const para = (children, opts = {}) =>
@@ -71,9 +82,20 @@ const heading = (text) =>
 const bullet = (text) => new Paragraph({ children: [run(text)], bullet: { level: 0 }, spacing: { after: 40 } });
 
 const children = [
-  para(run(cv.name, { bold: true, size: 32 }), { alignment: AlignmentType.LEFT, spacing: { after: 40 } }),
-  para(run(cv.headline, { bold: true })),
-  para(run(cv.contact)),
+  para(run(cv.name, { bold: true, size: 36 }), { spacing: { after: 40 } }),
+  para(run(cv.headline, { bold: true, size: 24, color: ACCENT })),
+  ...cv.contact.map((line) =>
+    para(
+      line.flatMap((part, i) => [
+        ...(i ? [run(" | ")] : []),
+        typeof part === "string"
+          ? run(part)
+          : new ExternalHyperlink({ link: part.link, children: [run(part.text, { color: LINK })] }),
+      ]),
+      { spacing: { after: 20 } }
+    )
+  ),
+  ...(cv.availability ? [para([run("Availability: ", { bold: true }), run(cv.availability)])] : []),
 
   heading("Summary"),
   para(run(cv.summary)),
