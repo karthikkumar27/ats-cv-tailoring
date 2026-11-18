@@ -38,23 +38,58 @@ Zip `SKILL.md` with the `reference/`, `templates/` and `scripts/` folders, then 
 
 Clone the repo and open your agent in it. `AGENTS.md` points the agent at `SKILL.md`. If your agent supports skills folders, copy the repo into its skills directory instead.
 
-## Use
+## Set up your job-search folder (once)
 
-1. Open your agent in the folder where you keep your job search (or in this repo).
-2. Paste a job description and ask for your resume to be rewritten for it.
-3. **First run only:** the agent asks for your current resume, then sets up two files:
-   - `profile/resume.md`: your master resume
-   - `profile/facts.md`: your confirmed facts log, started from [templates/facts.md](templates/facts.md)
+The skill works inside one folder that holds your master CV, your facts log and every application you've made. Pick any private folder, for example `~/job-search`. Don't put it in a public repo.
 
-   It asks a few questions (team sizes, which numbers are estimates, tools you've only used lightly). Answer them once and every later resume follows them.
-4. You get:
-   - `applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>.docx`, the resume
-   - `applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>_Cover_Letter.pdf`, a 1-page cover letter in the same layout as your previous ones
-   - `applications/<Company>_<Role>/keywords.txt`, the JD keywords the resume matches
-   - `applications/<Company>_<Role>/notes.md` with the fit verdict, the exact title used, the keyword count, the choices made, the gaps, the JD text and a cover letter summary
-   - a short reply: fit rating, what changed, numbered gaps, and one question
+```text
+job-search/
+  profile/
+    resume_build.js     your master CV as a build script (optional, best layout control)
+    resume.md           or your master CV as Markdown, .docx or .pdf
+    facts.md            your confirmed facts log
+  applications/
+    Acme_Senior_Backend_Engineer/
+      ...one folder per job, written by the skill
+```
 
-When you confirm something new ("yes, I've used Terraform in production"), the agent adds it to your facts log so later resumes can use it, but only when a JD asks for it.
+1. **Add your master CV** to `profile/`. This is the base every tailored resume starts from. Choose one:
+   - **Markdown, .docx or .pdf** (`profile/resume.md`, `resume.docx` or `resume.pdf`): the easiest start. The agent builds each new resume from its content.
+   - **A build script** (`profile/resume_build.js`): your CV written as code, so every resume comes out in exactly the same layout, fonts and colours. Copy [templates/resume_build.js](templates/resume_build.js), replace the example data with yours, and run `npm install docx@9` in the folder. If this file exists, the skill uses it.
+2. **Start your facts log**: copy [templates/facts.md](templates/facts.md) to `profile/facts.md`. Fill in the standing rules (page limit, paper size, work authorisation) and anything true that isn't on your CV yet. You don't have to finish it: the agent asks the first-run questions and adds facts as you confirm them.
+3. **Optional: earlier applications.** If you've tailored resumes before, put each one in its own `applications/<Company>_<Role>/` folder. The skill starts from the closest match.
+
+Skip all of this and the skill does it for you: on the first run with no `profile/` folder, it asks for your current resume and sets up both files.
+
+## From JD to tailored CV
+
+Open your agent in the job-search folder and paste the job description, with any notes from the posting ("PDF only", "include expected salary"). The skill then works through these steps:
+
+```text
+paste JD
+  -> 1. Fit check       location, work rights, languages, seniority, duplicates
+                        (it stops and asks if there's a hard blocker)
+  -> 2. Keywords        exact title, tools, certifications, repeated phrases,
+                        each mapped to your real experience or marked a gap
+  -> 3. Build           headline, summary, JD-only skills, bullets, from your
+                        master CV and facts log
+  -> 4. Check           scripts/ats_check.py: layout, contact, dates,
+                        keywords, page count
+  -> 5. Cover letter    1 page, same facts, one honest gap paragraph
+  -> 6. Save + reply    files in applications/, fit verdict, gaps, one question
+```
+
+You get:
+
+- `applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>.docx`, the resume
+- `applications/<Company>_<Role>/<First>_<Last>_<Role>_<Company>_Cover_Letter.pdf`, a 1-page cover letter in the same layout as your previous ones
+- `applications/<Company>_<Role>/keywords.txt`, the JD keywords the resume matches
+- `applications/<Company>_<Role>/notes.md` with the fit verdict, the exact title used, the keyword count, the choices made, the gaps, the JD text and a cover letter summary
+- a short reply: fit rating, what changed, numbered gaps, and one question
+
+**Answer the question at the end.** It's usually about the biggest gap ("have you used Kafka, even in a side project?"). When you confirm something, the agent adds it to `profile/facts.md` with the date and the exact wording you approved, and rebuilds the resume. Your facts log gets more complete with every application, so later resumes have more true material to draw from. A new fact only appears on a resume when that JD asks for it.
+
+**Review before you send.** Open the .docx, read every line, and check you can talk about each claim in an interview. The skill keeps to your facts, but you're the one applying.
 
 ## Example
 
