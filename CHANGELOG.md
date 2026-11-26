@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4.1 (2026-11-26)
+
+Added `tests/run_tests.py` and a GitHub Actions workflow that runs it on every push and pull request, with LibreOffice for real page counts. It checks version sync, the plugin manifests, the check script's self-test, and builds the example resume (plus no-certifications, no-link and no-projects variants) through the ATS check and the house-style checks.
+
 ## 2.4.0 (2026-11-26)
 
 Removed the "Tech stack" line under each job from `templates/resume_build.js`, and the skill no longer adds one. JD tools go in the bullets and the Skills section. The optional "Selected projects" line stays.

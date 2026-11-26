@@ -1,0 +1,33 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # LibreOffice gives real page counts; Carlito has the same metrics as Calibri.
+      - name: Install LibreOffice and fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libreoffice-writer-nogui fonts-crosextra-carlito
+
+      - name: Install test dependencies
+        run: |
+          pip install pypdf
+          npm install --no-save docx@9
+
+      - name: Run tests
+        run: python tests/run_tests.py

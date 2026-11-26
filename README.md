@@ -1,5 +1,7 @@
 # ATS CV Tailoring
 
+[![test](https://github.com/karthikkumar27/ats-cv-tailoring/actions/workflows/test.yml/badge.svg)](https://github.com/karthikkumar27/ats-cv-tailoring/actions/workflows/test.yml)
+
 An agent skill that rewrites your resume for one job description. Paste a JD and you get back an ATS-friendly 2-page `.docx`, a matching 1-page cover letter, a fit verdict, a short list of what changed, and an honest list of the requirements you don't meet.
 
 It works with Claude Code, Claude.ai, Codex, Cursor and any agent that reads `SKILL.md` or `AGENTS.md`.
@@ -209,7 +211,7 @@ One column, no tables or text boxes, contact details in the body (not the header
 
 ## Contributing
 
-Issues and pull requests are welcome. Read [AGENTS.md](AGENTS.md) first: it covers keeping `SKILL.md` agent-neutral and the version number in sync. Never include a real person's resume in an issue or PR.
+Issues and pull requests are welcome. Read [AGENTS.md](AGENTS.md) first: it covers keeping `SKILL.md` agent-neutral and the version number in sync. Run `python tests/run_tests.py` before opening a pull request; CI runs the same tests on every push. Never include a real person's resume in an issue or PR.
 
 ## License
 
