@@ -75,9 +75,10 @@ const para = (children, opts = {}) =>
   new Paragraph({ children: Array.isArray(children) ? children : [children], spacing: { after: 60 }, ...opts });
 const heading = (text) =>
   new Paragraph({
-    children: [run(text.toUpperCase(), { bold: true, size: 22 })],
-    spacing: { before: 200, after: 80 },
-    border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "999999", space: 1 } },
+    spacing: { before: 125, after: 45 },
+    keepNext: true,
+    border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "808080", space: 2 } },
+    children: [run(text, { bold: true, size: 22 })],
   });
 const bullet = (text) => new Paragraph({ children: [run(text)], bullet: { level: 0 }, spacing: { after: 40 } });
 
