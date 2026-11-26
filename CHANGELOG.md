@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4.0 (2026-11-26)
+
+Removed the "Tech stack" line under each job from `templates/resume_build.js`, and the skill no longer adds one. JD tools go in the bullets and the Skills section. The optional "Selected projects" line stays.
+
 ## 2.3.0 (2026-11-26)
 
 `templates/resume_build.js` now matches a real, ATS-checked resume in every section:

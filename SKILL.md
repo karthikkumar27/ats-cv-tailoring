@@ -2,7 +2,7 @@
 name: ats-cv-tailoring
 description: Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx plus a matching 1-page cover letter, with a fit verdict, a change log and an honest list of gaps. Use when someone pastes a job description (JD) and wants their resume or CV adapted to it, asks for an ATS check, or asks how well they fit a role.
 metadata:
-  version: 2.3.0
+  version: 2.4.0
 ---
 
 # ATS CV Tailoring
@@ -59,7 +59,7 @@ The resume must read as if it was written for this one job, not as a list of eve
 2. **Don't carry skills over** from the master resume, the facts log or earlier applications just because they're true. The facts log is a pool to draw from, not a list to include every time. A Python/AWS JD that never mentions Node.js or Docker gets neither in Skills.
 3. **Order:** the most JD-relevant category first, and JD-matching skills first within each category.
 4. **Back up the top JD skills** in the Summary or a bullet too, not only in the Skills list.
-5. **Bullets** describe real work, but name only the tools that matter for this JD. Drop "Tech stack" lines unless they're mostly JD technologies.
+5. **Bullets** describe real work, but name only the tools that matter for this JD. Don't add a "Tech stack" line under jobs: name the JD tools inside the bullets and the Skills section instead.
 6. **Projects:** keep the ones that support the JD and drop the rest, unless the facts log has an "Always include" list. Those stay on every resume; they can be shortened or merged into one bullet, never dropped.
 7. **JD skills the person lacks never go on the resume.** They go in the reply and `notes.md` as gaps.
 

@@ -44,7 +44,6 @@ const cv = {
         "Mentored 4 junior engineers through code review and weekly pairing.",
       ],
       projects: null, // optional "Selected projects:" line under the bullets
-      stack: "Python, Go, PostgreSQL, AWS (Lambda, SQS, RDS)", // optional "Tech stack:" line
     },
     {
       title: "Backend Engineer",
@@ -88,13 +87,12 @@ const heading = (text) =>
     children: [run(text.toUpperCase(), { bold: true, size: 22 })],
   });
 const bullet = (text) => new Paragraph({ numbering: { reference: "b", level: 0 }, spacing: { after: 35 }, children: [run(text)] });
-function job(title, company, location, dates, bullets, projects, stack) {
+function job(title, company, location, dates, bullets, projects) {
   return [
     new Paragraph({ spacing: { before: 85, after: 0 }, keepNext: true, children: [run(title, { bold: true, size: 21 })] }),
     new Paragraph({ spacing: { after: 45 }, keepNext: true, children: [run(`${company} | ${location} | ${dates}`, { italics: true })] }),
     ...bullets.map(bullet),
     ...(projects ? [para([run("Selected projects: ", { bold: true }), run(projects)], { spacing: { before: 15, after: 20 } })] : []),
-    ...(stack ? [para([run("Tech stack: ", { bold: true }), run(stack)], { spacing: { after: 25 } })] : []),
   ];
 }
 
@@ -121,7 +119,7 @@ const children = [
   ...cv.skills.map(([cat, items]) => para([run(`${cat}: `, { bold: true }), run(items)])),
 
   heading("Work Experience"),
-  ...cv.experience.flatMap((j) => job(j.title, j.company, j.location, j.dates, j.bullets, j.projects, j.stack)),
+  ...cv.experience.flatMap((j) => job(j.title, j.company, j.location, j.dates, j.bullets, j.projects)),
 ];
 
 if (cv.projects.length) {
