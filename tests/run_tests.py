@@ -91,7 +91,7 @@ def _():
 @test("example resume builds and passes the ATS check (2 pages max)")
 def _():
     out = sh(sys.executable, CHECK, build(BUILDER, "default"), "--pages", "2")
-    print("      " + "\n      ".join(l for l in out.splitlines() if not l.startswith("PASS")) or "      all PASS")
+    print("\n".join("      " + l for l in out.splitlines() if "page" in l or not l.startswith("PASS")))
 
 
 @test("example resume keeps the house style")
