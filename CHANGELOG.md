@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.2 (2026-11-26)
+
+Section headings in `templates/resume_build.js` are in capitals again (SUMMARY, WORK EXPERIENCE), keeping the 2.1.1 spacing, rule and `keepNext`.
+
 ## 2.1.1 (2026-11-26)
 
 `templates/resume_build.js` section headings: tighter spacing (125 before, 45 after), a thinner grey rule (`808080`, size 4), `keepNext` so a heading never sits alone at the bottom of a page, and headings print as written instead of in capitals.

@@ -78,7 +78,7 @@ const heading = (text) =>
     spacing: { before: 125, after: 45 },
     keepNext: true,
     border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "808080", space: 2 } },
-    children: [run(text, { bold: true, size: 22 })],
+    children: [run(text.toUpperCase(), { bold: true, size: 22 })],
   });
 const bullet = (text) => new Paragraph({ children: [run(text)], bullet: { level: 0 }, spacing: { after: 40 } });
 
