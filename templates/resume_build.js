@@ -59,11 +59,16 @@ const cv = {
   ],
   projects: [
     {
-      name: "invoice-diff",
-      line: "Open-source Python tool that compares invoice exports between two databases and reports mismatches.",
+      name: "invoice-diff: Invoice Reconciliation CLI",
+      type: "Open-source project", // or "Personal project"
+      link: { text: "github.com/example/invoice-diff", url: "https://github.com/example/invoice-diff" }, // optional
+      bullets: ["Built a Python CLI that compares invoice exports between two databases and reports mismatches."],
     },
   ],
-  education: [{ degree: "BSc Computer Science", school: "Example University", dates: "2016 – 2020" }],
+  education: [
+    { degree: "BSc Computer Science", school: "Example University", location: "Singapore", dates: "2016 – 2020" },
+  ],
+  certifications: ["AWS Certified Developer – Associate (Amazon Web Services, 2024)"], // leave [] for none
   extra: [],
 };
 
@@ -94,8 +99,8 @@ function job(title, company, location, dates, bullets, projects, stack) {
 }
 
 const children = [
-  para(run(cv.name, { bold: true, size: 36 }), { spacing: { after: 40 } }),
-  para(run(cv.headline, { bold: true, size: 24, color: BLUE })),
+  para(run(cv.name.toUpperCase(), { bold: true, size: 34 }), { spacing: { after: 20 } }),
+  para(run(cv.headline, { bold: true, size: 23, color: BLUE })),
   ...cv.contact.map((line) =>
     para(
       line.flatMap((part, i) => [
@@ -104,7 +109,7 @@ const children = [
           ? run(part)
           : link(part.link, part.text),
       ]),
-      { spacing: { after: 20 } }
+      { spacing: { after: 0 } }
     )
   ),
   ...(cv.availability ? [para([run("Availability: ", { bold: true }), run(cv.availability)])] : []),
@@ -120,12 +125,26 @@ const children = [
 ];
 
 if (cv.projects.length) {
-  children.push(heading("Projects"), ...cv.projects.map((p) => para([run(`${p.name}: `, { bold: true }), run(p.line)])));
+  children.push(
+    heading("Projects"),
+    ...cv.projects.flatMap((p) => [
+      new Paragraph({ spacing: { before: 55, after: 15 }, keepNext: true, children: [run(p.name, { bold: true, size: 21 })] }),
+      new Paragraph({
+        spacing: { after: 45 },
+        keepNext: true,
+        children: [run(p.link ? `${p.type} | ` : p.type, { italics: true }), ...(p.link ? [link(p.link.url, p.link.text)] : [])],
+      }),
+      ...p.bullets.map(bullet),
+    ])
+  );
 }
 
 children.push(
-  heading("Education"),
-  ...cv.education.map((e) => para([run(e.degree, { bold: true }), run(`, ${e.school} | ${e.dates}`)])),
+  heading(cv.certifications.length ? "Education and Certifications" : "Education"),
+  ...cv.education.map((e) =>
+    para([run(e.degree, { bold: true }), run(` | ${e.school} | ${e.location} | ${e.dates}`)], { spacing: { after: 35 } })
+  ),
+  ...(cv.certifications.length ? [para([run("Certifications: ", { bold: true }), run(cv.certifications.join("; "))])] : []),
   ...cv.extra.map((line) => para(run(line), { spacing: { before: 120 } }))
 );
 
@@ -143,7 +162,7 @@ const doc = new Document({
             format: LevelFormat.BULLET,
             text: "•",
             alignment: AlignmentType.LEFT,
-            style: { paragraph: { indent: { left: 360, hanging: 240 } } },
+            style: { paragraph: { indent: { left: 330, hanging: 220 } } },
           },
         ],
       },
@@ -153,7 +172,7 @@ const doc = new Document({
     {
       properties: {
         // A4 in twips. For US Letter use width 12240, height 15840.
-        page: { size: { width: 11906, height: 16838 }, margin: { top: 850, bottom: 850, left: 1000, right: 1000 } },
+        page: { size: { width: 11906, height: 16838 }, margin: { top: 700, bottom: 700, left: 880, right: 880 } },
       },
       children,
     },

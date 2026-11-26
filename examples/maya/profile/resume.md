@@ -40,3 +40,7 @@ Jun 2020 – Feb 2022
 ## Education
 
 BSc Computer Science | Example University | 2016 – 2020
+
+## Certifications
+
+AWS Certified Developer – Associate | Amazon Web Services | 2024

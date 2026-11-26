@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.0 (2026-11-26)
+
+`templates/resume_build.js` now matches a real, ATS-checked resume in every section:
+
+- Name in capitals; tighter header spacing.
+- Projects: a bold title line, an italic "Open-source project | link" line (link optional), then bullets.
+- Education lines include the location; an optional Certifications line, with the heading switching to "Education and Certifications" when there are any.
+- Bullet indent 330/220 and page margins 700 top and bottom, 880 left and right.
+
 ## 2.2.0 (2026-11-26)
 
 `templates/resume_build.js` now follows a real working resume more closely:
