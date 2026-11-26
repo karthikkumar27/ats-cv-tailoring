@@ -2,7 +2,7 @@
 name: ats-cv-tailoring
 description: Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx plus a matching 1-page cover letter, with a fit verdict, a change log and an honest list of gaps. Use when someone pastes a job description (JD) and wants their resume or CV adapted to it, asks for an ATS check, or asks how well they fit a role.
 metadata:
-  version: 2.1.2
+  version: 2.2.0
 ---
 
 # ATS CV Tailoring

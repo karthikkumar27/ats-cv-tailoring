@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.2.0 (2026-11-26)
+
+`templates/resume_build.js` now follows a real working resume more closely:
+
+- One dark blue (`1F4E79`) for the headline and every link, set in a single `BLUE` constant.
+- Each job is a bold title line, then an italic `Company | Location | Dates` line, both kept with the bullets that follow.
+- Optional "Selected projects:" and "Tech stack:" lines under each job.
+- Bullets use a defined `•` list instead of Word's default, with tighter spacing.
+
 ## 2.1.2 (2026-11-26)
 
 Section headings in `templates/resume_build.js` are in capitals again (SUMMARY, WORK EXPERIENCE), keeping the 2.1.1 spacing, rule and `keepNext`.

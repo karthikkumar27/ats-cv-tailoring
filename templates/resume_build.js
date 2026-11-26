@@ -7,7 +7,7 @@
 // Colour is only on the headline and links: ATS parsers ignore colour, recruiters see it.
 
 const fs = require("fs");
-const { Document, Packer, Paragraph, TextRun, ExternalHyperlink, BorderStyle } = require("docx");
+const { Document, Packer, Paragraph, TextRun, ExternalHyperlink, BorderStyle, LevelFormat, AlignmentType } = require("docx");
 
 // Everything below is invented. Maya Tan is not a real person.
 const cv = {
@@ -43,6 +43,8 @@ const cv = {
         "Built an order events pipeline on AWS Lambda and SQS that handles 300,000 messages a day.",
         "Mentored 4 junior engineers through code review and weekly pairing.",
       ],
+      projects: null, // optional "Selected projects:" line under the bullets
+      stack: "Python, Go, PostgreSQL, AWS (Lambda, SQS, RDS)", // optional "Tech stack:" line
     },
     {
       title: "Backend Engineer",
@@ -66,13 +68,13 @@ const cv = {
 };
 
 const FONT = "Calibri";
-const SIZE = 20; // half-points, so 20 = 10pt
-const ACCENT = "2E74B5"; // headline colour
-const LINK = "0563C1"; // Word's standard hyperlink blue
+const BODY = 20; // half-points, so 20 = 10pt
+const BLUE = "1F4E79"; // headline and links
 
-const run = (text, opts = {}) => new TextRun({ text, font: FONT, size: SIZE, ...opts });
+const run = (text, opts = {}) => new TextRun({ text, font: FONT, size: BODY, ...opts });
+const link = (url, label) => new ExternalHyperlink({ link: url, children: [run(label, { color: BLUE })] });
 const para = (children, opts = {}) =>
-  new Paragraph({ children: Array.isArray(children) ? children : [children], spacing: { after: 60 }, ...opts });
+  new Paragraph({ spacing: { after: 55 }, ...opts, children: Array.isArray(children) ? children : [children] });
 const heading = (text) =>
   new Paragraph({
     spacing: { before: 125, after: 45 },
@@ -80,18 +82,27 @@ const heading = (text) =>
     border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "808080", space: 2 } },
     children: [run(text.toUpperCase(), { bold: true, size: 22 })],
   });
-const bullet = (text) => new Paragraph({ children: [run(text)], bullet: { level: 0 }, spacing: { after: 40 } });
+const bullet = (text) => new Paragraph({ numbering: { reference: "b", level: 0 }, spacing: { after: 35 }, children: [run(text)] });
+function job(title, company, location, dates, bullets, projects, stack) {
+  return [
+    new Paragraph({ spacing: { before: 85, after: 0 }, keepNext: true, children: [run(title, { bold: true, size: 21 })] }),
+    new Paragraph({ spacing: { after: 45 }, keepNext: true, children: [run(`${company} | ${location} | ${dates}`, { italics: true })] }),
+    ...bullets.map(bullet),
+    ...(projects ? [para([run("Selected projects: ", { bold: true }), run(projects)], { spacing: { before: 15, after: 20 } })] : []),
+    ...(stack ? [para([run("Tech stack: ", { bold: true }), run(stack)], { spacing: { after: 25 } })] : []),
+  ];
+}
 
 const children = [
   para(run(cv.name, { bold: true, size: 36 }), { spacing: { after: 40 } }),
-  para(run(cv.headline, { bold: true, size: 24, color: ACCENT })),
+  para(run(cv.headline, { bold: true, size: 24, color: BLUE })),
   ...cv.contact.map((line) =>
     para(
       line.flatMap((part, i) => [
         ...(i ? [run(" | ")] : []),
         typeof part === "string"
           ? run(part)
-          : new ExternalHyperlink({ link: part.link, children: [run(part.text, { color: LINK })] }),
+          : link(part.link, part.text),
       ]),
       { spacing: { after: 20 } }
     )
@@ -105,12 +116,7 @@ const children = [
   ...cv.skills.map(([cat, items]) => para([run(`${cat}: `, { bold: true }), run(items)])),
 
   heading("Work Experience"),
-  ...cv.experience.flatMap((job) => [
-    para([run(`${job.title}, ${job.company}`, { bold: true }), run(` | ${job.location} | ${job.dates}`)], {
-      spacing: { before: 120, after: 40 },
-    }),
-    ...job.bullets.map(bullet),
-  ]),
+  ...cv.experience.flatMap((j) => job(j.title, j.company, j.location, j.dates, j.bullets, j.projects, j.stack)),
 ];
 
 if (cv.projects.length) {
@@ -126,7 +132,23 @@ children.push(
 const doc = new Document({
   creator: cv.name,
   title: `${cv.name} Resume`,
-  styles: { default: { document: { run: { font: FONT, size: SIZE } } } },
+  styles: { default: { document: { run: { font: FONT, size: BODY } } } },
+  numbering: {
+    config: [
+      {
+        reference: "b",
+        levels: [
+          {
+            level: 0,
+            format: LevelFormat.BULLET,
+            text: "•",
+            alignment: AlignmentType.LEFT,
+            style: { paragraph: { indent: { left: 360, hanging: 240 } } },
+          },
+        ],
+      },
+    ],
+  },
   sections: [
     {
       properties: {
