@@ -2,7 +2,7 @@
 
 ## 2.6.0 (2026-11-27)
 
-Added a visual check. `scripts/ats_check.py --render DIR` saves every page as a PNG (pypdfium2, and LibreOffice for a .docx) and warns about one word left alone on a line and a last page under 25% full. The skill now renders the resume and cover letter after the mechanical checks and, when the agent can read images, looks at each page for cut-off text, stranded headings and spacing. The tests render the example letter and resume and check that a made-up one-word line is caught.
+Added a visual check. `scripts/ats_check.py --render DIR` saves every page as a PNG (pypdfium2, and LibreOffice for a .docx) and warns about one word left alone on a line and a last page under 25% full. The skill now renders the resume and cover letter after the mechanical checks and, when the agent can read images, looks at each page for cut-off text, stranded headings and spacing. The tests render the example letter and resume and check that a made-up one-word line is caught. The first CI run caught a real one in the example resume ("week." alone on a line), fixed by rewording the bullet.
 
 ## 2.5.0 (2026-11-27)
 

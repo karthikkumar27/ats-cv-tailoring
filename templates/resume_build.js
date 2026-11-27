@@ -52,7 +52,7 @@ const cv = {
       dates: "Jun 2020 – Feb 2022",
       bullets: [
         "Wrote Go services for stock reservations across 120 stores.",
-        "Moved nightly reports from cron scripts to scheduled Lambda jobs, saving an estimated 10 hours of manual work a week.",
+        "Moved nightly reports from cron to scheduled Lambda jobs, saving an estimated 10 hours of manual work a week.",
       ],
     },
   ],
