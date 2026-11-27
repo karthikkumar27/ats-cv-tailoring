@@ -1,7 +1,7 @@
 {
   "name": "ats-cv-tailoring",
   "description": "Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx plus a matching 1-page cover letter, with a fit verdict, a change log and an honest list of gaps.",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "author": {
     "name": "karthikkumar27",
     "url": "https://github.com/karthikkumar27"

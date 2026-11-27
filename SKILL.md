@@ -2,7 +2,7 @@
 name: ats-cv-tailoring
 description: Rewrite your resume for one pasted job description as an ATS-friendly 2-page .docx plus a matching 1-page cover letter, with a fit verdict, a change log and an honest list of gaps. Use when someone pastes a job description (JD) and wants their resume or CV adapted to it, asks for an ATS check, or asks how well they fit a role.
 metadata:
-  version: 2.5.0
+  version: 2.6.0
 ---
 
 # ATS CV Tailoring
@@ -23,7 +23,7 @@ In this skill's folder:
 
 - `reference/ats-guide.md`: ATS do's and don'ts, the keyword method and the pre-submission checklist. Follow it on every application.
 - `templates/`: `facts.md`, `cover-letter.md`, `resume_build.js` and `cover_letter_build.py` for first runs.
-- `scripts/ats_check.py`: the mechanical checks (layout, contact, dates, keywords, page counts).
+- `scripts/ats_check.py`: the mechanical checks (layout, contact, dates, keywords, page counts) and, with `--render`, page images plus layout warnings.
 
 Per job, the user gives the JD (pasted text or a file) and any application notes, such as "PDF required" or "they asked for expected salary".
 
@@ -92,11 +92,12 @@ Follow section 4 of `reference/ats-guide.md`:
    - Roles in reverse chronological order, by start date.
 4. **Render the .docx.** If `profile/resume_build.js` exists, copy it into the application folder, change only the content, and run it with `node`. Otherwise copy `templates/resume_build.js` the same way, or use what the environment has: a docx skill, `python-docx` or `pandoc`. Follow the format rules below.
 5. **Check:** run `python scripts/ats_check.py <resume.docx> --keywords <keywords.txt> --pages 2` from this skill's folder. `--pages` is a maximum. It fails on tables, text boxes, images, text in headers or footers, missing contact details, mixed date formats, unmatched keywords and too many pages. Fix every failure and run it again. If it reports the page count as unverified (no PDF converter), say so in the reply.
+   - **Look at it:** add `--render applications/<Company>_<Role>/qa` (needs `pip install pypdfium2 pillow`, and LibreOffice for a .docx). It saves `page-1.png`, `page-2.png` and so on, and warns about one word left alone on a line and a nearly empty last page. If you can read images, open every page and check for cut-off text, a heading stranded at the bottom of a page, uneven spacing and the accent colour. Fix what you find by rewording or trimming, never by shrinking the font or margins. If you can't read images, rely on the warnings and tell the user to glance at the PNGs.
 6. **Self-review** against the honesty rules and the pre-submission checklist in `reference/ats-guide.md`. Remove any claim that isn't confirmed and any skill the JD doesn't name.
 7. **Cover letter (every JD, always):** a 1-page PDF next to the resume, in the same layout every time. Start from the most recent cover letter in `applications/`. First time, fill in `templates/cover-letter.md`. To render it, copy `profile/cover_letter_build.py` if it exists, or `templates/cover_letter_build.py`, into the application folder, change only the `LETTER` content, and run it with `python` (needs `reportlab`).
    - Same honesty rules and JD-only focus as the resume. Lead with what matches the JD. Never claim a skill the person lacks.
    - One plain gap paragraph when there's a real gap: what's missing, and the closest thing they have done.
-   - Check it with `python scripts/ats_check.py <cover-letter.pdf> --pages 1`.
+   - Check it with `python scripts/ats_check.py <cover-letter.pdf> --pages 1 --render applications/<Company>_<Role>/qa-letter` and look at it the same way.
 8. **Save** to `applications/<Company>_<Role>/`: the resume `.docx`, the cover letter PDF, any build scripts, `keywords.txt`, and `notes.md` with:
    - the fit verdict and blockers
    - the exact title used and the number of keywords matched

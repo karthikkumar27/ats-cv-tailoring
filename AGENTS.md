@@ -22,7 +22,7 @@ Read `SKILL.md` and follow it step by step. It's the source of truth for the wor
 - Keep `README.md` in sync with `SKILL.md` (steps, rules, file layout).
 - Keep one version number in three places: `metadata.version` in `SKILL.md`, `.claude-plugin/plugin.json`, and the newest heading in `CHANGELOG.md`.
 - The plugin manifests reuse the first sentence of the `SKILL.md` description. Change them together.
-- Before every push, run `python tests/run_tests.py` (needs `npm install --no-save docx@9` and `pip install pypdf reportlab`). CI runs the same suite with LibreOffice, so page counts are checked there too. A red CI run means don't merge.
+- Before every push, run `python tests/run_tests.py` (needs `npm install --no-save docx@9` and `pip install pypdf reportlab pypdfium2 pillow`). CI runs the same suite with LibreOffice, so page counts are checked there too. A red CI run means don't merge.
 - After changing `SKILL.md`, also run the skill on `examples/maya/` and check the output against the honesty and JD-only rules.
 - Never put a real person's resume, facts or job applications in the repo. Examples use invented people.
 

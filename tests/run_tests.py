@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Repo test suite. Runs locally and in CI (.github/workflows/test.yml).
 
-  npm install --no-save docx@9 && pip install pypdf reportlab
+  npm install --no-save docx@9 && pip install pypdf reportlab pypdfium2 pillow
   python tests/run_tests.py
 
 Needs Node with the `docx` package resolvable from the repo (or via NODE_PATH).
@@ -168,6 +168,38 @@ def _():
         assert r.returncode == 1 and "limit 1" in r.stdout, "a 2-page letter passed the 1-page check"
     finally:
         os.remove(src)
+
+
+def render(path, name):
+    qa = os.path.join(OUT, "qa-" + name)
+    r = subprocess.run([sys.executable, CHECK, path, "--render", qa], capture_output=True, text=True, encoding="utf-8")
+    return r.stdout, qa
+
+
+@test("--render saves page images and passes the example letter and resume")
+def _():
+    out, qa = render(os.path.join(OUT, "letter.pdf"), "letter")
+    assert "PASS: no one-word lines" in out, out
+    assert os.path.exists(os.path.join(qa, "page-1.png")), "no page image: " + out
+    out, qa = render(os.path.join(OUT, "default.docx"), "resume")
+    if "no LibreOffice" in out:
+        print("      WARN: resume render skipped (no LibreOffice)")
+    else:
+        assert "PASS: no one-word lines" in out and os.path.exists(os.path.join(qa, "page-1.png")), out
+
+
+@test("--render warns about one word left alone on a line")
+def _():
+    from reportlab.pdfgen import canvas
+    pdf = os.path.join(OUT, "widow.pdf")
+    c = canvas.Canvas(pdf)
+    c.drawString(72, 700, "Tech stack: Python, FastAPI, PostgreSQL, Redis, Docker, Kubernetes, AWS Lambda, SQS,")
+    c.drawString(72, 686, "Pino")
+    c.drawString(72, 660, "A short line")
+    c.drawString(72, 646, "Done.")
+    c.save()
+    out, _ = render(pdf, "widow")
+    assert "WARN: one word alone on a line (reword to pull it back): Pino" in out, out
 
 
 print(f"\n{len(failures)} failure(s)" if failures else "\nall tests passed")

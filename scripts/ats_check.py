@@ -3,11 +3,13 @@
 
   python scripts/ats_check.py resume.docx --keywords keywords.txt --pages 2
   python scripts/ats_check.py cover-letter.pdf --pages 1
+  python scripts/ats_check.py resume.docx --render qa/      # page images + layout warnings
   python scripts/ats_check.py --self-test
 
 Prints PASS / WARN / FAIL lines and exits 1 if anything failed.
 --pages is a maximum. Page counts need LibreOffice (soffice) for .docx; without it the count is reported as unverified.
 Install pypdf for exact PDF page counts and the text-based PDF check.
+--render needs pypdfium2 and pillow (and LibreOffice for .docx).
 """
 import argparse, io, os, re, shutil, subprocess, sys, tempfile, zipfile
 
@@ -36,7 +38,7 @@ def pdf_pages(path):
         return len(re.findall(rb"/Type\s*/Page(?![a-z])", data)), None
 
 
-def docx_pages(path):
+def docx_to_pdf(path):
     soffice = shutil.which("soffice") or shutil.which("libreoffice")
     if not soffice:
         return None
@@ -44,7 +46,78 @@ def docx_pages(path):
     subprocess.run([soffice, "--headless", "--convert-to", "pdf", "--outdir", out, path],
                    capture_output=True, timeout=180)
     pdf = os.path.join(out, os.path.splitext(os.path.basename(path))[0] + ".pdf")
-    return pdf_pages(pdf)[0] if os.path.exists(pdf) else None
+    return pdf if os.path.exists(pdf) else None
+
+
+def docx_pages(path):
+    pdf = docx_to_pdf(path)
+    return pdf_pages(pdf)[0] if pdf else None
+
+
+def pdf_lines(path):
+    """Text lines per page as (y, x, text), top to bottom, from the PDF's text positions."""
+    import pypdf
+    pages = []
+    for page in pypdf.PdfReader(path).pages:
+        segs = []
+
+        def grab(text, cm, tm, *_):
+            if text.strip():
+                x = cm[0] * tm[4] + cm[2] * tm[5] + cm[4]
+                y = cm[1] * tm[4] + cm[3] * tm[5] + cm[5]
+                segs.append((round(y), x, text))
+
+        page.extract_text(visitor_text=grab)
+        rows = {}
+        for y, x, t in segs:
+            rows.setdefault(y, []).append((x, t))
+        lines = [(y, min(s)[0], " ".join(t.strip() for _, t in sorted(s))) for y, s in rows.items()]
+        pages.append((float(page.mediabox.height), sorted(lines, reverse=True)))
+    return pages
+
+
+def widows(pages):
+    """A 1-word line that a wrapped line spilled onto, like 'Pino' alone under a long Tech stack line."""
+    found = []
+    for _, lines in pages:
+        longest = max((len(t) for _, _, t in lines), default=0)
+        for (_, px, prev), (_, x, t) in zip(lines, lines[1:]):
+            if (len(t.split()) == 1 and len(t) <= 15 and abs(px - x) <= 20
+                    and len(prev) >= 0.75 * longest and not prev.rstrip().endswith((".", ":", ";", "!", "?"))):
+                found.append(t)
+    return found
+
+
+def layout(path, outdir):
+    """Save page images for a visual check and warn about layout problems the text checks can't see."""
+    res = []
+    pdf = path if path.lower().endswith(".pdf") else docx_to_pdf(path)
+    if not pdf:
+        return [("WARN", "render skipped: no LibreOffice to turn the .docx into a PDF")]
+    try:
+        import pypdfium2
+        os.makedirs(outdir, exist_ok=True)
+        doc = pypdfium2.PdfDocument(pdf)
+        names = []
+        for i in range(len(doc)):
+            name = os.path.join(outdir, f"page-{i + 1}.png")
+            doc[i].render(scale=2).to_pil().save(name)
+            names.append(name)
+        res.append(("PASS", f"page images: {', '.join(names)}"))
+    except ImportError:
+        res.append(("WARN", "page images skipped (pip install pypdfium2 pillow)"))
+    try:
+        pages = pdf_lines(pdf)
+    except ImportError:
+        return res + [("WARN", "layout checks skipped (pip install pypdf)")]
+    w = widows(pages)
+    res.append(("WARN", f"one word alone on a line (reword to pull it back): {', '.join(w)}") if w else ("PASS", "no one-word lines"))
+    if len(pages) > 1:
+        height, lines = pages[-1]
+        used = (height - min(y for y, _, _ in lines)) / height if lines else 0
+        res.append(("WARN", f"last page only {used:.0%} full: trim to {len(pages) - 1} page(s) or use the space")
+                   if used < 0.25 else ("PASS", f"last page {used:.0%} full"))
+    return res
 
 
 def check(path, keywords=None, pages=None, page_counter=docx_pages):
@@ -124,6 +197,7 @@ def main():
     ap.add_argument("file", nargs="?")
     ap.add_argument("--keywords", help="text file, one keyword per line")
     ap.add_argument("--pages", type=int, help="expected page count")
+    ap.add_argument("--render", metavar="DIR", help="save page images (PNG) to DIR and check the layout")
     ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args()
     if a.self_test:
@@ -131,7 +205,7 @@ def main():
     if not a.file:
         ap.error("give a .docx or .pdf file")
     kws = [l.strip() for l in open(a.keywords, encoding="utf-8") if l.strip()] if a.keywords else None
-    res = check(a.file, kws, a.pages)
+    res = check(a.file, kws, a.pages) + (layout(a.file, a.render) if a.render else [])
     for level, msg in res:
         print(f"{level}: {msg}")
     sys.exit(1 if any(l == "FAIL" for l, _ in res) else 0)

@@ -76,7 +76,8 @@ paste JD
   -> 3. Build           headline, summary, JD-only skills, bullets, from your
                         master CV and facts log
   -> 4. Check           scripts/ats_check.py: layout, contact, dates,
-                        keywords, page count
+                        keywords, page count, then page images the agent
+                        looks at (one-word lines, empty last page)
   -> 5. Cover letter    1 page, same facts, one honest gap paragraph
   -> 6. Save + reply    files in applications/, fit verdict, gaps, one question
 ```
@@ -188,6 +189,7 @@ applications/AcmePay_Senior_Backend_Engineer/
 - Something that can write `.docx`: a docx skill, `python-docx`, the `docx` npm package or `pandoc`.
 - **Optional, for an identical layout every time:** copy [templates/resume_build.js](templates/resume_build.js) to `profile/resume_build.js`, replace the example data with yours, and run `npm install docx@9`. The agent then edits only the content and runs it with `node`.
 - Something that can write a PDF for the cover letter. The simplest is the included [templates/cover_letter_build.py](templates/cover_letter_build.py) with `pip install reportlab`; LibreOffice or a PDF skill also work.
+- **Optional, for the visual check:** `pip install pypdfium2 pillow`. The check script then saves each page as a PNG, warns about one word alone on a line and a nearly empty last page, and an agent that can read images looks at every page.
 - **Recommended:** LibreOffice, so the agent can also convert the resume to PDF and confirm both page counts. Without it the agent says the page count is unverified.
 
 ## Format rules
@@ -200,7 +202,7 @@ One column, no tables or text boxes, contact details in the body (not the header
 |---|---|
 | [SKILL.md](SKILL.md) | The skill: workflow, honesty rules, cover letter, format rules |
 | [reference/ats-guide.md](reference/ats-guide.md) | How ATS parsing works, do's and don'ts, keyword method, pre-submission checklist |
-| [scripts/ats_check.py](scripts/ats_check.py) | Checks layout, contact details, dates, keywords and page counts (`--self-test` to test it) |
+| [scripts/ats_check.py](scripts/ats_check.py) | Checks layout, contact details, dates, keywords and page counts (`--render DIR` for page images, `--self-test` to test it) |
 | [templates/facts.md](templates/facts.md) | Starting point for your facts log |
 | [templates/cover-letter.md](templates/cover-letter.md) | Layout for your first cover letter |
 | [templates/cover_letter_build.py](templates/cover_letter_build.py) | Matching 1-page PDF cover letter builder (invented example data, needs `reportlab`) |
@@ -212,7 +214,7 @@ One column, no tables or text boxes, contact details in the body (not the header
 
 ## Contributing
 
-Issues and pull requests are welcome. Read [AGENTS.md](AGENTS.md) first: it covers keeping `SKILL.md` agent-neutral and the version number in sync. Run `python tests/run_tests.py` before opening a pull request (needs `npm install --no-save docx@9` and `pip install pypdf reportlab`); CI runs the same tests on every push. Never include a real person's resume in an issue or PR.
+Issues and pull requests are welcome. Read [AGENTS.md](AGENTS.md) first: it covers keeping `SKILL.md` agent-neutral and the version number in sync. Run `python tests/run_tests.py` before opening a pull request (needs `npm install --no-save docx@9` and `pip install pypdf reportlab pypdfium2 pillow`); CI runs the same tests on every push. Never include a real person's resume in an issue or PR.
 
 ## License
 
