@@ -6,6 +6,10 @@ An agent skill that rewrites your resume for one job description. Paste a JD and
 
 It works with Claude Code, Claude.ai, Codex, Cursor and any agent that reads `SKILL.md` or `AGENTS.md`.
 
+[![Watch the 77-second overview on YouTube](https://img.youtube.com/vi/cR8tZk3bBwU/maxresdefault.jpg)](https://www.youtube.com/watch?v=cR8tZk3bBwU)
+
+*Watch the 77-second overview on YouTube.*
+
 ## Why it exists
 
 Most AI resume tools do two things wrong. They stuff every skill you've ever touched into the Skills section, and they quietly upgrade your claims ("mentored" becomes "managed", an estimate becomes a fact). This skill is built around the opposite rules:
