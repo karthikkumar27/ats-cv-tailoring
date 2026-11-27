@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.0 (2026-11-27)
+
+Added `templates/cover_letter_build.py`: a reportlab builder for the 1-page PDF cover letter, in the same look as the resume (right-aligned contact block, bold blue "Application for" title, Helvetica 10.5pt, A4). It escapes `&` and `<` so company names like "R&D" render. The skill now uses it to render cover letters, and the test suite builds it, checks it is 1 text-based page, and checks the ATS check catches a letter that spills onto page 2.
+
 ## 2.4.1 (2026-11-26)
 
 Added `tests/run_tests.py` and a GitHub Actions workflow that runs it on every push and pull request, with LibreOffice for real page counts. It checks version sync, the plugin manifests, the check script's self-test, and builds the example resume (plus no-certifications, no-link and no-projects variants) through the ATS check and the house-style checks.

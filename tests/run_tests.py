@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Repo test suite. Runs locally and in CI (.github/workflows/test.yml).
 
-  npm install --no-save docx@9 && pip install pypdf
+  npm install --no-save docx@9 && pip install pypdf reportlab
   python tests/run_tests.py
 
 Needs Node with the `docx` package resolvable from the repo (or via NODE_PATH).
@@ -50,13 +50,13 @@ def paragraphs(docx):
     return xml, paras, ["".join(re.findall(r"<w:t[^>]*>([^<]*)</w:t>", p)) for p in paras]
 
 
-def variant(name, *subs):
-    """Copy the builder with regex substitutions, kept in templates/ so `docx` resolves the same way."""
-    s = read(BUILDER)
+def variant(name, *subs, src=BUILDER):
+    """Copy a builder with regex substitutions, kept in templates/ so dependencies resolve the same way."""
+    s = read(src)
     for pat, rep in subs:
         s, n = re.subn(pat, rep, s, flags=re.S)
         assert n == 1, f"variant {name}: pattern not found: {pat[:40]}"
-    path = os.path.join(ROOT, "templates", f"_test_{name}.js")
+    path = os.path.join(ROOT, "templates", f"_test_{name}{os.path.splitext(src)[1]}")
     open(path, "w", encoding="utf-8").write(s)
     return path
 
@@ -128,6 +128,44 @@ def _():
         docx = build(src, "noproj")
         sh(sys.executable, CHECK, docx, "--pages", "2")
         assert "PROJECTS" not in paragraphs(docx)[2], "empty Projects heading rendered"
+    finally:
+        os.remove(src)
+
+
+LETTER = os.path.join(ROOT, "templates", "cover_letter_build.py")
+
+
+def letter_text(src, name):
+    out = os.path.join(OUT, name + ".pdf")
+    sh(sys.executable, src, out)
+    import pypdf
+    return out, pypdf.PdfReader(out).pages[0].extract_text()
+
+
+@test("example cover letter builds as a 1-page text PDF")
+def _():
+    out, text = letter_text(LETTER, "letter")
+    sh(sys.executable, CHECK, out, "--pages", "1")
+    for want in ("Maya Tan", "maya.tan@example.com", "Application for Senior Backend Engineer, Payments", "Kind regards,"):
+        assert want in text, f"missing: {want}"
+
+
+@test("cover letter keeps & and < in the text")
+def _():
+    src = variant("amp", (r'"role": "[^"]*"', '"role": "R&D <Platform> Engineer"'), src=LETTER)
+    try:
+        assert "Application for R&D <Platform> Engineer" in letter_text(src, "amp")[1], "escaped text missing"
+    finally:
+        os.remove(src)
+
+
+@test("ATS check catches a cover letter that spills onto page 2")
+def _():
+    src = variant("long", (r'    \],\n    "closing"', '    ] * 3,\n    "closing"'), src=LETTER)
+    try:
+        out, _ = letter_text(src, "long")
+        r = subprocess.run([sys.executable, CHECK, out, "--pages", "1"], capture_output=True, text=True)
+        assert r.returncode == 1 and "limit 1" in r.stdout, "a 2-page letter passed the 1-page check"
     finally:
         os.remove(src)
 

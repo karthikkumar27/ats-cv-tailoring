@@ -187,7 +187,7 @@ applications/AcmePay_Senior_Backend_Engineer/
 - Python 3 for the check script (standard library only; `pypdf` makes PDF page counts exact).
 - Something that can write `.docx`: a docx skill, `python-docx`, the `docx` npm package or `pandoc`.
 - **Optional, for an identical layout every time:** copy [templates/resume_build.js](templates/resume_build.js) to `profile/resume_build.js`, replace the example data with yours, and run `npm install docx@9`. The agent then edits only the content and runs it with `node`.
-- Something that can write a PDF for the cover letter: LibreOffice (`soffice --headless --convert-to pdf`), a PDF skill, or a library such as `reportlab`.
+- Something that can write a PDF for the cover letter. The simplest is the included [templates/cover_letter_build.py](templates/cover_letter_build.py) with `pip install reportlab`; LibreOffice or a PDF skill also work.
 - **Recommended:** LibreOffice, so the agent can also convert the resume to PDF and confirm both page counts. Without it the agent says the page count is unverified.
 
 ## Format rules
@@ -203,6 +203,7 @@ One column, no tables or text boxes, contact details in the body (not the header
 | [scripts/ats_check.py](scripts/ats_check.py) | Checks layout, contact details, dates, keywords and page counts (`--self-test` to test it) |
 | [templates/facts.md](templates/facts.md) | Starting point for your facts log |
 | [templates/cover-letter.md](templates/cover-letter.md) | Layout for your first cover letter |
+| [templates/cover_letter_build.py](templates/cover_letter_build.py) | Matching 1-page PDF cover letter builder (invented example data, needs `reportlab`) |
 | [templates/resume_build.js](templates/resume_build.js) | Optional resume builder with a fixed ATS-safe layout (invented example data) |
 | [examples/maya/](examples/maya) | Invented candidate and JD for trying and testing the skill |
 | [AGENTS.md](AGENTS.md) | Instructions for any agent working in this repo |
@@ -211,7 +212,7 @@ One column, no tables or text boxes, contact details in the body (not the header
 
 ## Contributing
 
-Issues and pull requests are welcome. Read [AGENTS.md](AGENTS.md) first: it covers keeping `SKILL.md` agent-neutral and the version number in sync. Run `python tests/run_tests.py` before opening a pull request; CI runs the same tests on every push. Never include a real person's resume in an issue or PR.
+Issues and pull requests are welcome. Read [AGENTS.md](AGENTS.md) first: it covers keeping `SKILL.md` agent-neutral and the version number in sync. Run `python tests/run_tests.py` before opening a pull request (needs `npm install --no-save docx@9` and `pip install pypdf reportlab`); CI runs the same tests on every push. Never include a real person's resume in an issue or PR.
 
 ## License
 
